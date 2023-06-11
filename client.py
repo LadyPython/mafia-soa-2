@@ -70,7 +70,8 @@ class Client:
     def connect_to_server(self):
         while self.stub is None:
             try:
-                address = input(f"{self.name}, provide the server address for connection (HOST:PORT): ")
+                address = input(
+                    f"{self.name}, provide the server address for connection (HOST:PORT) (leave empty for default): ")
                 if not address:
                     address = f"{HOST}:{PORT}"
                     print(f"{cf.yellow}Address is empty.{cf.reset} Connecting to default {address}...")
