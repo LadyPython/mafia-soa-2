@@ -1,11 +1,18 @@
 # Мафия
-<img width="656" alt="image" src="https://github.com/LadyPython/mafia-soa-2/assets/6313540/c8cccfc9-4143-460a-85e1-6495acb750e5">
+
+<img width="692" alt="image" src="https://github.com/LadyPython/mafia-soa-2/assets/6313540/be3f129b-7cb3-4fd2-aca9-8e0b8fde2c47">
+
 
 ## Запуск
 ### Сервер
-`docker compose up --build`
+```
+docker compose up --build
+```
 ### Клиент
-`docker pull ladypython/mafia-client:latest`
+```
+docker pull ladypython/mafia-client:latest
+docker run -it --rm --network host ladypython/mafia-client:latest
+```
 
 
 ## Игра
@@ -18,6 +25,9 @@
 - Отображение состояния игрока и действий, происходящих в игре
 - Случайный выбор действий среди возможных на каждом этапе игры
 
+<img width="691" alt="image" src="https://github.com/LadyPython/mafia-soa-2/assets/6313540/6960c196-570b-47e9-a337-32e4968dc77e">
+
+
 Сервер обеспечивает:
 - Подключение игроков
 - Рассылку уведомлений о подключившихся игроках
@@ -26,3 +36,27 @@
 - Получение от игроков выбранных действий, их выполнение и изменение состояния игроков
 - Учет статуса игры и завершение игры при выигрыше мирных жителей или мафии
 - Возможность ведения нескольких сеансов игры одновременно, назначая каждому из сеансов уникальный идентификатор
+- Возможность ведения нескольких сеансов игры одновременно, назначая каждому из сеансов уникальный идентификатор
+
+## Демо
+
+Детектив выбирает, опубликовать ли информацию о мафиях:
+
+<img width="261" alt="image" src="https://github.com/LadyPython/mafia-soa-2/assets/6313540/c58cb95e-b538-4b65-a0ca-f74983e42c67">
+
+Мафия выбирает, кого убить:
+
+<img width="315" alt="image" src="https://github.com/LadyPython/mafia-soa-2/assets/6313540/cf40b18f-cec1-4683-a4ac-ed1a931a5d6d">
+
+Мирный житель переходит в состояние духа:
+
+<img width="499" alt="image" src="https://github.com/LadyPython/mafia-soa-2/assets/6313540/2a55f940-43ce-44af-9807-2d273efa95e5">
+
+Утреннее голосование:
+
+<img width="359" alt="image" src="https://github.com/LadyPython/mafia-soa-2/assets/6313540/1b8d0791-5ffe-4b54-bf99-6ae04d0bc496">
+
+День целиком с победой мафии:
+
+<img width="677" alt="image" src="https://github.com/LadyPython/mafia-soa-2/assets/6313540/2bfeb779-33d7-4d12-a950-d15317bf20d4">
+
