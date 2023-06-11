@@ -1,0 +1,5 @@
+protobuf==4.23.2
+grpcio==1.54.2
+colorful==0.5.5
+art==5.9
+simple-term-menu==1.6.1

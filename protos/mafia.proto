@@ -1,0 +1,146 @@
+syntax = "proto3";
+
+package mafia;
+
+service Mafia {
+  rpc Connect(ConnectRequest) returns (ConnectResponse) {}
+
+  rpc CreateGame(CreateGameRequest) returns (CreateGameResponse) {}
+  rpc JoinGame(JoinGameRequest) returns (JoinGameResponse) {}
+
+  rpc ListPlayers(ListPlayersRequest) returns (ListPlayersResponse) {}
+  rpc GetRole(GetRoleRequest) returns (GetRoleResponse) {}
+
+  rpc GameProcess(GameProcessRequest) returns (stream GameProcessResponse) {}
+
+  rpc VoteDay(VoteDayRequest) returns (VoteDayResponse) {}
+  rpc VoteNight(VoteNightRequest) returns (VoteNightResponse) {}
+  rpc Check(CheckRequest) returns (CheckResponse) {}
+  rpc Publish(PublishRequest) returns (PublishResponse) {}
+}
+
+
+message ConnectRequest {
+  string name = 1;
+}
+
+message ConnectResponse {
+  string token = 1;
+}
+
+message CreateGameRequest {
+  string token = 1;
+  int32 required_players_cnt = 2;
+}
+
+message CreateGameResponse {
+  string code = 1;
+}
+
+message JoinGameRequest {
+  string token = 1;
+  string code = 2;
+}
+
+message JoinGameResponse {
+}
+
+message ListPlayersRequest {
+  string token = 1;
+}
+
+message Player {
+  string name = 1;
+  int32 id = 2;
+}
+
+message ListPlayersResponse {
+  int32 required_players_cnt = 1;
+  repeated Player players = 2;
+}
+
+message GetRoleRequest {
+  string token = 1;
+}
+
+message GetRoleResponse {
+  Role role = 1;
+}
+
+message GameProcessRequest {
+  string token = 1;
+}
+
+message EndDayRequest {
+  string token = 1;
+}
+
+message EndDayResponse {
+}
+
+message VoteDayRequest {
+  string token = 1;
+  int32 player_id = 2;
+}
+
+message VoteDayResponse {
+}
+
+message VoteNightRequest {
+  string token = 1;
+  int32 player_id = 2;
+}
+
+message VoteNightResponse {
+}
+
+message CheckRequest {
+  string token = 1;
+  int32 player_id = 2;
+}
+
+message CheckResponse {
+//  Role role = 1;
+  repeated Player mafias = 1;
+}
+
+message PublishRequest {
+  string token = 1;
+  bool decision = 2;
+}
+
+message PublishResponse {
+}
+
+enum Role {
+  ROLE_UNSPECIFIED = 0;
+  ROLE_VILLAGER = 1;
+  ROLE_MAFIA = 2;
+  ROLE_DETECTIVE = 3;
+}
+
+message GameProcessResponse {
+  message StartDay {
+    bool is_alive = 1;
+    repeated Player players = 2;
+    repeated Player mafias = 3;
+    optional Player detective = 4;
+  }
+
+  message StartNight {
+    bool is_alive = 1;
+    Role role = 2;
+    repeated Player players = 3;
+    repeated Player mafias = 4;
+  }
+
+  message EndGame {
+    Role winner = 1;
+  }
+
+  oneof event {
+    StartDay day = 1;
+    StartNight night = 2;
+    EndGame end = 3;
+  }
+}
