@@ -34,11 +34,12 @@ class Game:
         self.player_id_to_player_info: dict[int, PlayerInfo] = dict()
 
         self.votes: dict[int, int] = dict()
+        self.event_started: asyncio.Event = asyncio.Event()
         self.event_killed: asyncio.Event = asyncio.Event()
         self.event_checked: asyncio.Event = asyncio.Event()
         self.checked_decision: bool | None = None
         self.checked_ids: list[int] = []
-        self.day_cnt = 0
+        self.started_cnt = 0
 
         self.id: int = Game.next_id
         logging.info(f"New Game({required_players_cnt}, id={Game.next_id})")
@@ -53,7 +54,7 @@ class Game:
         for id, role in zip(self.player_id_to_player_info.keys(), roles):
             self.player_id_to_player_info[id].role = role
 
-        logging.info(f"{self.player_id_to_player_info} assigned")
+        logging.info(f"Roles assigned")
 
     def add_player(self, player_id: int):
         if len(self.player_id_to_player_info) == self.required_players_cnt:
@@ -136,6 +137,11 @@ class Game:
 
         self.checked_decision = decision
         self.event_checked.set()
+
+    def start(self):
+        self.started_cnt += 1
+        if self.started_cnt == self.required_players_cnt:
+            self.event_started.set()
 
     def start_night(self):
         self.checked_decision = None
@@ -228,7 +234,18 @@ class EService(mafia_pb2_grpc.MafiaServicer):
         return mafia_pb2.CreateGameResponse(code=code)
 
     async def JoinGame(self, request: mafia_pb2.JoinGameRequest, context) -> mafia_pb2.JoinGameResponse:
+        if request.token not in self.token_to_player:
+            context.set_code(grpc.StatusCode.UNAUTHENTICATED)
+            context.set_details(f"Player {request.token} not registered")
+            return mafia_pb2.JoinGameResponse()
+
         player = self.token_to_player[request.token]
+
+        if request.code not in self.code_to_game:
+            context.set_code(grpc.StatusCode.NOT_FOUND)
+            context.set_details(f"Game {request.code} not found")
+            return mafia_pb2.JoinGameResponse()
+
         game = self.code_to_game[request.code]
 
         game.add_player(player.id)
@@ -304,6 +321,9 @@ class EService(mafia_pb2_grpc.MafiaServicer):
         game = self.game_id_to_game[game_id]
 
         logging.info(f'{game.id}: {player.name}({player.id}) process')
+
+        game.start()
+        await game.event_started.wait()
 
         while True:
             game.start_night()
